@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -68,8 +67,14 @@ class SecondFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        view.findViewById<Button>(R.id.button_second).setOnClickListener {
-            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
+        val count = args.myArg
+        val countText = getString(R.string.random_heading, count)
+        view.findViewById<TextView>(R.id.textview_header).text = countText
+
+        view.findViewById<Button>(R.id.button_previous).setOnClickListener {
+            val action = SecondFragmentDirections.actionSecondFragmentToFirstFragment()
+            action.initialCount = count
+            findNavController().navigate(action)
         }
 
         view.findViewById<Button>(R.id.call_button).setOnClickListener {
@@ -78,10 +83,6 @@ class SecondFragment : Fragment() {
 //            activity!!.startActivity(callIntent)
             phoneNumberInput(view)
         }
-
-        val count = args.myArg
-        val countText = getString(R.string.random_heading, count)
-        view.findViewById<TextView>(R.id.textview_header).text = countText
 
         val random = java.util.Random()
         var randomNumber = 0

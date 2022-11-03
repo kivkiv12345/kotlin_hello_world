@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import com.example.helloworld.MainActivity.Companion.toast_text
 import com.example.helloworld.databinding.FragmentFirstBinding
 
 /**
@@ -46,15 +48,21 @@ class FirstFragment : Fragment() {
         showCountTextView.text = count.toString()
     }
 
+    private val args: FirstFragmentArgs by navArgs()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Get the text view
+        val showCountTextView = view.findViewById<TextView>(R.id.textview_first)
+        // Set initial count
+        val count = args.initialCount
+        showCountTextView.text = count.toString()
 
         binding.countButton.setOnClickListener {
             countMe(view)
         }
 
         binding.randomButton.setOnClickListener {
-            val showCountTextView = view.findViewById<TextView>(R.id.textview_first)
             val currentCount = showCountTextView.text.toString().toInt()
             val action = FirstFragmentDirections.actionFirstFragmentToSecondFragment(currentCount)
             findNavController().navigate(action)
@@ -62,7 +70,7 @@ class FirstFragment : Fragment() {
 
         binding.toastButton.setOnClickListener {
             // create a Toast with some text, to appear for a short time
-            val myToast = Toast.makeText(context, "Hello Toast!", Toast.LENGTH_SHORT)
+            val myToast = Toast.makeText(context, toast_text, Toast.LENGTH_SHORT)
             // show the Toast
             myToast.show()
         }
