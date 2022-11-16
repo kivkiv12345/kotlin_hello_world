@@ -21,7 +21,7 @@ import com.example.helloworld.databinding.FragmentSecondBinding
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
  */
-class SecondFragment : Fragment() {
+class SecondFragment(activity: MainActivity) : BaseFragment(activity) {
 
     private var _binding: FragmentSecondBinding? = null
 
@@ -32,7 +32,7 @@ class SecondFragment : Fragment() {
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = FragmentSecondBinding.inflate(inflater, container, false)
         return binding.root
@@ -53,28 +53,21 @@ class SecondFragment : Fragment() {
         // Set up the buttons
         builder.setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
             // Here you get get input text from the Edittext
-            var phone_number: String = input.text.toString()
+            val phone_number: String = input.text.toString()
 
             val callIntent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phone_number))
-            activity!!.startActivity(callIntent)
+            requireActivity().startActivity(callIntent)
         })
         builder.setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which -> dialog.cancel() })
 
         builder.show()
     }
 
-    private val args: SecondFragmentArgs by navArgs()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val count = args.myArg
-        val countText = getString(R.string.random_heading, count)
-        view.findViewById<TextView>(R.id.textview_header).text = countText
-
         view.findViewById<Button>(R.id.button_previous).setOnClickListener {
-            val action = SecondFragmentDirections.actionSecondFragmentToFirstFragment()
-            action.initialCount = count
-            findNavController().navigate(action)
+            this.activity.viewPager.currentItem -= 1
         }
 
         view.findViewById<Button>(R.id.call_button).setOnClickListener {
@@ -83,6 +76,14 @@ class SecondFragment : Fragment() {
 //            activity!!.startActivity(callIntent)
             phoneNumberInput(view)
         }
+    }
+
+    override fun onResume() {
+
+        val countText = getString(R.string.random_heading, this.activity.count)
+        this.requireView().findViewById<TextView>(R.id.textview_header).text = countText
+
+        val count = this.activity.count
 
         val random = java.util.Random()
         var randomNumber = 0
@@ -92,7 +93,9 @@ class SecondFragment : Fragment() {
         if (randomNumber == 0) {
             // Display sink
         }
-        view.findViewById<TextView>(R.id.textview_random).text = randomNumber.toString()
+        this.requireView().findViewById<TextView>(R.id.textview_random).text = randomNumber.toString()
+
+        super.onResume()
     }
 
     override fun onDestroyView() {
